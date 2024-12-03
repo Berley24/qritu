@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de QR Code com Localização Automática</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #qrcode {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gerador de QR Code com Localização Automática</h1>
+  <p>Gerando QR Code com sua localização...</p>
+  <div id="qrcode"></div>
+
+  <script>
+    // Função para obter a localização do usuário automaticamente ao acessar o site
+    function getLocationAndGenerateQRCode() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        alert("Geolocalização não é suportada pelo seu navegador.");
+      }
+    }
+
+    // Função que é chamada quando a localização é obtida com sucesso
+    function showPosition(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      // Gerar uma URL com a localização do usuário
+      const qrData = `https://meusite.com/?lat=${latitude}&long=${longitude}`;
+
+      // Gerar o QR Code com a URL contendo a localização
+      generateQRCode(qrData);
+    }
+
+    // Função para lidar com erros de localização
+    function showError(error) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("Usuário negou a solicitação de geolocalização.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("A localização não pôde ser obtida.");
+          break;
+        case error.TIMEOUT:
+          alert("A solicitação de geolocalização expirou.");
+          break;
+        case error.UNKNOWN_ERROR:
+          alert("Erro desconhecido.");
+          break;
+      }
+    }
+
+    // Função para gerar o QR Code com a URL gerada
+    function generateQRCode(data) {
+      const qrCodeContainer = document.getElementById('qrcode');
+      qrCodeContainer.innerHTML = ''; // Limpa qualquer QR Code anterior
+
+      QRCode.toCanvas(data, { width: 200, margin: 2 }, (error, canvas) => {
+        if (error) {
+          console.error(error);
+          alert('Erro ao gerar QR Code.');
+          return;
+        }
+
+        qrCodeContainer.appendChild(canvas);
+      });
+    }
+
+    // Inicia o processo de captura da localização e geração do QR Code assim que a página for carregada
+    window.onload = getLocationAndGenerateQRCode;
+  </script>
+</body>
+</html>
