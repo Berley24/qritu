@@ -30,7 +30,7 @@
   <h1>Formulário de Cadastro</h1>
   <p>Preencha os campos abaixo:</p>
 
-  <!-- Formulário de Cadastro -->
+  <!-- Formulário -->
   <div id="form-container">
     <form id="cadastroForm">
       <div>
@@ -55,21 +55,19 @@
   </div>
 
   <script>
-    // Função para capturar os dados do formulário e exibir um alerta ou enviar os dados
+    // Processa o formulário ao enviar
     document.getElementById('cadastroForm').addEventListener('submit', function(event) {
-      event.preventDefault();  // Evita o envio padrão do formulário
+      event.preventDefault();  // Impede o envio padrão
 
-      // Coleta os dados do formulário
+      // Coletando os dados do formulário
       const nome = document.getElementById('nome').value;
       const rgm = document.getElementById('rgm').value;
       const turma = document.getElementById('turma').value;
 
-      // Exibir os dados em um alerta (ou enviar os dados para um backend)
+      // Mostra os dados preenchidos em um alerta
       alert(`Nome: ${nome}\nRGM: ${rgm}\nTurma: ${turma}`);
 
-      // Aqui você pode enviar os dados para um servidor ou salvar localmente
-      // Exemplo: 
-      // fetch('/salvar-dados', { method: 'POST', body: JSON.stringify({ nome, rgm, turma }) })
+      // Aqui você pode enviar os dados para um backend ou salvá-los
     });
   </script>
 </body>
