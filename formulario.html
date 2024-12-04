@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulário de Presença</title>
+    <script>
+      const distanciaMaxima = 20; // Raio em metros
+      let latitudeProfessor, longitudeProfessor;
+      const senhaProfessor = "1234"; // Senha do professor (use uma senha mais segura em produção)
+
+      function iniciarSistema() {
+        const userType = prompt(
+          "Você é o professor ou um aluno? (Digite 'professor' ou 'aluno')"
+        ).toLowerCase();
+
+        if (userType === "professor") {
+          autenticarProfessor();
+        } else if (userType === "aluno") {
+          verificarAluno();
+        } else {
+          alert("Tipo de usuário inválido. A página será recarregada.");
+          location.reload();
+        }
+      }
+
+      function autenticarProfessor() {
+        const senhaInserida = prompt("Por favor, insira a senha de professor:");
+
+        if (senhaInserida === senhaProfessor) {
+          configurarProfessor();
+        } else {
+          alert("Senha incorreta. A página será recarregada.");
+          location.reload();
+        }
+      }
+
+      function configurarProfessor() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              latitudeProfessor =
+                Math.round(position.coords.latitude * 1e6) / 1e6;
+              longitudeProfessor =
+                Math.round(position.coords.longitude * 1e6) / 1e6;
+
+              // Salva a localização no localStorage
+              localStorage.setItem("latitudeProfessor", latitudeProfessor);
+              localStorage.setItem("longitudeProfessor", longitudeProfessor);
+
+              alert(
+                `Localização do professor configurada! Latitude: ${latitudeProfessor}, Longitude: ${longitudeProfessor}`
+              );
+            },
+            (error) => {
+              alert("Erro ao obter localização do professor: " + error.message);
+            },
+            { enableHighAccuracy: true }
+          );
+        } else {
+          alert("Geolocalização não suportada pelo navegador.");
+        }
+      }
+
+      function verificarAluno() {
+        // Recupera a localização salva do professor
+        latitudeProfessor = parseFloat(
+          localStorage.getItem("latitudeProfessor")
+        );
+        longitudeProfessor = parseFloat(
+          localStorage.getItem("longitudeProfessor")
+        );
+
+        if (isNaN(latitudeProfessor) || isNaN(longitudeProfessor)) {
+          alert(
+            "A localização do professor ainda não foi configurada. Tente novamente mais tarde."
+          );
+          return;
+        }
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const latitudeAluno =
+                Math.round(position.coords.latitude * 1e6) / 1e6;
+              const longitudeAluno =
+                Math.round(position.coords.longitude * 1e6) / 1e6;
+
+              console.log(
+                "Localização do aluno:",
+                latitudeAluno,
+                longitudeAluno
+              );
+
+              const distancia = calcularDistancia(
+                latitudeProfessor,
+                longitudeProfessor,
+                latitudeAluno,
+                longitudeAluno
+              );
+              console.log("Distância calculada:", distancia, "metros");
+
+              if (distancia <= distanciaMaxima) {
+                document.getElementById("formulario").style.display = "block";
+                alert("Você está dentro do raio permitido. Acesso liberado!");
+              } else {
+                alert(
+                  `Você está fora do raio permitido (${distancia.toFixed(
+                    2
+                  )} metros). Acesso negado.`
+                );
+              }
+            },
+            (error) => {
+              alert("Erro ao obter localização do aluno: " + error.message);
+            },
+            { enableHighAccuracy: true }
+          );
+        } else {
+          alert("Geolocalização não suportada pelo navegador.");
+        }
+      }
+
+      function calcularDistancia(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // Raio da Terra em metros
+        const rad = Math.PI / 180;
+        const dLat = (lat2 - lat1) * rad;
+        const dLon = (lon2 - lon1) * rad;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * rad) *
+            Math.cos(lat2 * rad) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distância em metros
+      }
+    </script>
+  </head>
+  <body onload="iniciarSistema()">
+    <h2>Formulário de Presença</h2>
+    <div id="formulario" style="display: none">
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" required /><br /><br />
+      <label for="rgm">RGM:</label>
+      <input type="text" id="rgm" required /><br /><br />
+      <label for="turma">Turma:</label>
+      <input type="text" id="turma" required /><br /><br />
+      <label for="turno">Turno:</label>
+      <input type="text" id="turno" required /><br /><br />
+      <button type="submit">Enviar</button>
+    </div>
+  </body>
+</html>

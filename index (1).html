@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code com Restrição</title>
+    <link rel="stylesheet" href="./CSS/index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        const usuariosAutorizados = {
+            "usuario1": "senha123"
+        };
+
+        let latitudeUsuario, longitudeUsuario;
+
+        function autenticarUsuario() {
+            const usuario = document.getElementById("usuario").value;
+            const senha = document.getElementById("senha").value;
+
+            if (usuariosAutorizados[usuario] === senha) {
+                document.getElementById("login").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+
+                navigator.geolocation.getCurrentPosition((position) => {
+                    latitudeUsuario = Math.round(position.coords.latitude * 1e6) / 1e6;
+                    longitudeUsuario = Math.round(position.coords.longitude * 1e6) / 1e6;
+                    console.log("Localização do usuário capturada:", latitudeUsuario, longitudeUsuario);
+                }, (error) => {
+                    alert("Erro ao obter localização: " + error.message);
+                }, { enableHighAccuracy: true });
+            } else {
+                alert("Usuário ou senha inválidos!");
+            }
+        }
+
+        function gerarQRCode() {
+            if (latitudeUsuario && longitudeUsuario) {
+                const linkUnico = `${window.location.origin}/formulario.html?lat=${latitudeUsuario}&lon=${longitudeUsuario}`;
+                console.log("Link do QR Code:", linkUnico);
+                new QRCode(document.getElementById("qrcode"), {
+                    text: linkUnico,
+                    width: 128,
+                    height: 128
+                });
+                document.getElementById("qrcodeContainer").style.display = "block";
+            } else {
+                alert("Localização não detectada. Tente novamente.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Login -->
+    <div id="login">
+        <h2>Login</h2>
+        <label for="usuario">Usuário:</label>
+        <input type="text" id="usuario" required><br><br>
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" required><br><br>
+        <button onclick="autenticarUsuario()">Entrar</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" style="display: none;">
+        <h2>Bem-vindo!</h2>
+        <button onclick="gerarQRCode()">Gerar QR Code</button>
+        <div id="qrcodeContainer" style="display: none;">
+            <h3>Escaneie o QR Code:</h3>
+            <div id="qrcode"></div>
+        </div>
+    </div>
+</body>
+</html>
