@@ -28,10 +28,8 @@ def validate_location():
 
     # Definindo um raio permitido (100 metros)
     if distance <= 0.1:
-        # Redirecionar para o formulário se a localização for válida
-        return redirect('/form.html')
+        return redirect('/form.html')  # Redireciona para o formulário se a localização for válida
     else:
-        # Responder com um erro se a localização for inválida
         return jsonify({
             "latitude": lat,
             "longitude": lon,
@@ -41,7 +39,6 @@ def validate_location():
 
 @app.route('/form.html')
 def form_page():
-    # Página do formulário
     return """
     <!DOCTYPE html>
     <html lang="en">
