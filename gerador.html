@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerador de QR Code</title>
+  <title>Gerador de QR Code com Localização</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <style>
     body {
@@ -18,7 +18,7 @@
 </head>
 <body>
   <h1>Gerador de QR Code</h1>
-  <p>Escaneie o QR Code abaixo para acessar o formulário (validando localização).</p>
+  <p>Escaneie o QR Code abaixo para acessar o formulário (com validação de localização).</p>
   <div id="qrcode"></div>
 
   <script>
@@ -31,7 +31,7 @@
           // URL do servidor Flask com a localização
           const qrData = `http://127.0.0.1:5000/validate-location?lat=${latitude}&long=${longitude}`;
 
-          // Gerar o QR Code
+          // Gerar o QR Code com a URL
           QRCode.toCanvas(qrData, { width: 200, margin: 2 }, (error, canvas) => {
             if (error) {
               console.error(error);
@@ -46,8 +46,7 @@
       }
     }
 
-    // Gera o QR Code automaticamente ao carregar a página
-    window.onload = getLocationAndGenerateQRCode;
+    window.onload = getLocationAndGenerateQRCode; // Gera QR Code automaticamente ao carregar a página
   </script>
 </body>
 </html>
