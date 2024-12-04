@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de QR Code</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #qrcode {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gerador de QR Code</h1>
+  <p>Escaneie o QR Code abaixo para acessar o formulário (validando localização).</p>
+  <div id="qrcode"></div>
+
+  <script>
+    function getLocationAndGenerateQRCode() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          // URL do servidor Flask com a localização
+          const qrData = `http://127.0.0.1:5000/validate-location?lat=${latitude}&long=${longitude}`;
+
+          // Gerar o QR Code
+          QRCode.toCanvas(qrData, { width: 200, margin: 2 }, (error, canvas) => {
+            if (error) {
+              console.error(error);
+              alert('Erro ao gerar QR Code.');
+              return;
+            }
+            document.getElementById('qrcode').appendChild(canvas);
+          });
+        });
+      } else {
+        alert('Geolocalização não é suportada pelo seu navegador.');
+      }
+    }
+
+    // Gera o QR Code automaticamente ao carregar a página
+    window.onload = getLocationAndGenerateQRCode;
+  </script>
+</body>
+</html>

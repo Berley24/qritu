@@ -20,12 +20,12 @@
   <h1>Gerador de QR Code</h1>
   <p>Escaneie o QR Code abaixo para acessar o formulário.</p>
   
-  <!-- Container para o QR Code gerado -->
+  <!-- Container para o QR Code -->
   <div id="qrcode"></div>
 
   <script>
-    // URL que será codificada no QR Code, que direcionará para o formulário
-    const qrData = "https://meusite.com/form.html"; // Substitua pela URL onde o formulário estará
+    // URL que será codificada no QR Code, direcionando para form.html
+    const qrData = "https://meusite.com/form.html"; // Substitua pela URL do seu formulário (ou mantenha o form.html localmente)
 
     // Gerar o QR Code com a URL
     QRCode.toCanvas(qrData, { width: 200, margin: 2 }, (error, canvas) => {
